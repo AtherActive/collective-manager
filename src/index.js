@@ -19,13 +19,3 @@ const framework = new Framework({
 });
 
 await framework.init();
-
-// on message
-framework.client.on('message', async (msg) => {
-    if(msg.content.includes('chip') && await Config.get('chip') == 'true') {
-        let randomTop = Math.floor(Math.random() * 100);
-        if(randomTop > 98) {
-            msg.react('👀')
-        }
-    }
-})
