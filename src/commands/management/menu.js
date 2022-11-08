@@ -2,7 +2,7 @@ import { Command, SlashCommand, SlashCommandEvent } from "strike-discord-salt-ed
 import Array from "../../models/Array.model.js";
 import Discord from "discord.js";
 import { subroutineRoleId, categoryId } from "../../config.js";
-import { awaitMessage, confirmAction, embedBuilder, error, menuBuilder } from "../../utils.js";
+import { awaitMessage, confirmAction, embedBuilder, error, handleError, menuBuilder } from "../../utils.js";
 import Config from "../../models/Config.model.js";
 
 export default class Menu extends SlashCommand {
@@ -15,7 +15,7 @@ export default class Menu extends SlashCommand {
 
     async run(event) {
         let {framework, interaction} = event;
-        let array = await Array.findOne({channelID: interaction.channel.id});
+        let array = await Array.findOne({where:{channelID: interaction.channel.id}});
 
         // Check if we even are in an array channel
         if(!array) {
@@ -31,11 +31,7 @@ export default class Menu extends SlashCommand {
         }
 
         // Build the menu
-        const emb = {
-            title: 'Array Menu',
-            description: 'Please select an option',
-            color: 'RED',
-        }
+        const emb = embedBuilder('Please select an option.\nExpires in 1 minute.', 'Array Menu')
         let menu = await menuBuilder(
             [
                 new Discord.MessageButton(({
@@ -67,25 +63,28 @@ export default class Menu extends SlashCommand {
             ], emb, interaction,true)
 
         // Based on the response, execute a function.
-        switch(await menu) {
-            case 'announcement':
-                await this.announcement(event);
-                break;
-            case 'delete':
-                await this.delete(event);
-                break;
-            case 'rename':
-                await this.rename(event);
-                break;
-            case 'public':
-                await this.public(event);
-                break;
-            case 'ping': 
-                await this.ping(event);
-                break;
-            default: 
-                let reply = await interaction.fetchReply();
-                await reply.delete();
+        try {
+            switch(await menu) {
+                case 'announcement':
+                    await this.announcement(event);
+                    break;
+                case 'delete':
+                    await this.delete(event);
+                    break;
+                case 'rename':
+                    await this.rename(event);
+                    break;
+                case 'public':
+                    await this.public(event);
+                    break;
+                case 'ping': 
+                    await this.ping(event);
+                    break;
+                default: 
+                return; 
+            }
+        } catch(e) {
+            await handleError(e,event)
         }
     }
 

@@ -6,7 +6,7 @@ dotenv.config();
 const framework = new Framework({
     token: process.env.TOKEN,
     defaultPrefix: '!',	
-    ownerID: 189317034360832001,
+    ownerID: '189317034360832001',
     databaseOpts: {
         databaseName: "collective",
         url: "mongodb://10.0.100.2:27017/collective",

@@ -1,7 +1,7 @@
 import { Command, SlashCommand, SlashCommandEvent } from "strike-discord-salt-edits-temp/dist/command.js";
-import Array from "../../models/Array.model.js";
-import { subroutineRoleId, categoryId } from "../../config.js";
-import { confirmAction } from "../../utils.js";
+import Array from "../models/Array.model.js";
+import { subroutineRoleId, categoryId } from "../config.js";
+import { confirmAction } from "../utils.js";
 
 export default class Delete extends SlashCommand {
     name = 'delete';

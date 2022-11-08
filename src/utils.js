@@ -51,8 +51,16 @@ export async function error(message, interaction) {
         title: 'Error',
         description: message,
         color: 'RED',
+        footer: {
+            text: 'We are one.',
+            iconURL: 'https://cdn.discordapp.com/attachments/1039278012329369740/1039278039105802270/744520554132013127.png'
+        }
     }
-    await interaction.reply({embeds:[emb], ephemeral: true});
+    try {
+        await interaction.reply({embeds:[emb], ephemeral: true});
+    } catch {
+        await interaction.editReply({embeds:[emb], ephemeral: true});
+    }
 }
 
 export async function awaitMessage(interaction) {
@@ -91,5 +99,34 @@ export function embedBuilder(description,type) {
         emb.color = 'BLUE';
         emb.footer.text = 'Expires in one minute.'
         return emb;
+    } else {
+        emb.title = type;
+        emb.color = 'RED';
+        emb.footer.text = 'We are one.';
+        return emb
+    }
+}
+
+export async function handleError(error,event) {
+    let {framework, interaction} = event;
+    await sendErrorMessage(`An error has occured. Your command has been halted. Error log send to IT.`, interaction);
+    let owner = await framework.client.users.fetch(framework.options.ownerID);
+    await owner.send(`**Error: by \`${interaction.user.username}\`** \n\`\`\`${error.stack}\`\`\``);
+}
+
+async function sendErrorMessage(message,interaction) {
+    let emb = {
+        title: 'Error',
+        description: message,
+        color: 'RED',
+        footer: {
+            text: 'We are one.',
+            iconURL: 'https://cdn.discordapp.com/attachments/1039278012329369740/1039278039105802270/744520554132013127.png'
+        }
+    }
+    try {
+        await interaction.reply({embeds:[emb], ephemeral: true});
+    } catch {
+        await interaction.editReply({embeds:[emb], ephemeral: true});
     }
 }

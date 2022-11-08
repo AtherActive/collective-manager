@@ -1,7 +1,7 @@
 import { SlashCommand } from "strike-discord-salt-edits-temp/dist/command.js";
 import Array from "../../models/Array.model.js";
 import Discord from "discord.js";
-import { menuBuilder } from "../../utils.js";
+import { embedBuilder, handleError, menuBuilder } from "../../utils.js";
 import Config from "../../models/Config.model.js";
 import Configuration from "../../config.js";
 
@@ -15,17 +15,16 @@ export default class AdminMenu extends SlashCommand {
 
     async run(event) {
         let {framework, interaction} = event;
+        let channel = interaction.channel;
 
         // Check if the user has in any way admin permissions
         if(!interaction.member.permissions.has('ADMINISTRATOR') || !framework.ownerID == interaction.member.id) {
             await interaction.reply({content: 'You do not have permission to use this command', ephemeral: true});
             return;
         }
-        const emb = {
-            title: 'Admin Menu',
-            description: 'Please select an option',
-            color: 'RED',
-        }
+
+
+        const emb = embedBuilder('Please select an option.\nExpires in 1 minute.', 'Admin Menu')
         let menu = await menuBuilder(
             [
                 new Discord.MessageButton(({
@@ -46,20 +45,23 @@ export default class AdminMenu extends SlashCommand {
 
             ], emb, interaction)
 
-        switch(await menu) {
-            case 'hook':
-                await this.hook(event);
-                break;
-            case 'delete':
-                await this.delete(event);
-                break;
-            case 'announcement':
-                await this.announcement(event);
-                break;
-            default: 
-                let reply = await interaction.fetchReply();
-                await reply.react('❌');
-        }
+            try {
+                switch(await menu) {
+                    case 'hook':
+                        await this.hook(event);
+                        break;
+                    case 'delete':
+                        await this.delete(event);
+                        break;
+                    case 'announcement':
+                        await this.announcement(event);
+                        break;
+                    default: 
+                        return;
+                }
+            } catch(e) {
+                handleError(e,event);
+            }
     }
 
     async hook(event) {
@@ -100,7 +102,7 @@ export default class AdminMenu extends SlashCommand {
         let channel = interaction.channel;
         let array = await Array.findOne({where: {channelId: channel.id}});
         if(!array) {
-            await interaction.editReply({content: 'This channel is not an array', ephemeral: true});
+            await interaction.reply({content: 'This channel is not an array', ephemeral: true});
             return;
         }
 
