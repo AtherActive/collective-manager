@@ -1,6 +1,7 @@
 import { Command, SlashCommand, SlashCommandEvent } from "strike-discord-salt-edits-temp/dist/command.js";
 import Array from "../../models/Array.model.js";
 import { subroutineRoleId, categoryId } from "../../config.js";
+import Config from "../../models/Config.model.js";
 
 export default class create extends SlashCommand {
     name = 'create';
@@ -56,6 +57,10 @@ export default class create extends SlashCommand {
                     id: role,
                     allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
                 },
+                {
+                    id: subroutineRoleId,
+                    allow: ['VIEW_CHANNEL'],
+                }
             ],
             reason: `Array created by ${interaction.user.tag}`,
         });

@@ -23,17 +23,17 @@ export default class Join extends SlashCommand {
             array = await this.getArray(event.interaction.options.getChannel('array'));
             if(!array) return 'Array not found';
         } catch(e) {
-            await event.interaction.reply({content: `Error: ${e}`, ephemeral: true});
+            await event.interaction.editReply({content: `Error: ${e}`, ephemeral: true});
         }
 
         // If the user is NOT in the array, return an error.
         if(!event.interaction.member.roles.cache.has(array.roleId)) {
-            await event.interaction.reply({content: 'You are not in this array!', ephemeral: true});
+            await event.interaction.editReply({content: 'You are not in this array!', ephemeral: true});
         }
 
         // Remove the user to the array.
         await event.interaction.member.roles.remove(array.roleId);
-        await event.interaction.reply({content: `You have left '${array.name}'`, ephemeral: true});
+        await event.interaction.editReply({content: `You have left '${array.name}'`, ephemeral: true});
     }
 
     /**

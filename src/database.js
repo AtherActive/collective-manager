@@ -14,6 +14,7 @@ const sequelize = new Sequelize('collective', process.env.DB_USERNAME, process.e
 setTimeout(async () => {
 
     const Array = await import('./models/Array.model.js');
+    const Config = await import('./models/Config.model.js');
 
     await sequelize.sync({alter: true, logging: false});
 },1000)

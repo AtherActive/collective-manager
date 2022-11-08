@@ -1,10 +1,7 @@
 import Framework from 'strike-discord-salt-edits-temp';
-import { sequelize } from './database.js';
-import { CommandEvent } from 'strike-discord-salt-edits-temp/dist/command.js';
 import dotenv from 'dotenv';
+import Config from './models/Config.model.js';
 dotenv.config();
-
-console.log(process.env.TOKEN);
 
 const framework = new Framework({
     token: process.env.TOKEN,
@@ -21,7 +18,14 @@ const framework = new Framework({
     commandsPath: `${process.cwd()}/src/commands/`,
 });
 
-    // framework.loadBotCommands(`${process.cwd()}/../node_modules/strike-discord-salt-edits-temp/dist/defaultCommands/`);
-    // framework.loadBotCommands(`${process.cwd()}/node_modules/strike-discord-framework/dist/defaultCommands/`);
-
 await framework.init();
+
+// on message
+framework.client.on('message', async (msg) => {
+    if(msg.content.includes('chip') && await Config.get('chip') == 'true') {
+        let randomTop = Math.floor(Math.random() * 100);
+        if(randomTop > 98) {
+            msg.react('👀')
+        }
+    }
+})
